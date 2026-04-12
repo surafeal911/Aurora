@@ -1,0 +1,1249 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Incident Registry — Exact Dispatcher LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: ['attribute', '[data-theme="dark"]'],
+  theme: { extend: {} }
+};
+</script>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --card: #141414;
+  --card2: #1a1a1a;
+  --border: rgba(255,107,0,0.15);
+  --text: #ffffff;
+  --text-muted: rgba(255,255,255,0.6);
+  --accent: #FF6B00;
+  --accent2: #FF8C33;
+  --input-bg: #1e1e1e;
+  --input-border: rgba(255,255,255,0.1);
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --glow: 0 0 15px rgba(255,107,0,0.2);
+  --header-bg: rgba(10,10,10,0.85);
+}
+[data-theme="light"] {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --card2: #f0f0f2;
+  --border: rgba(230,92,0,0.2);
+  --text: #111111;
+  --text-muted: #444444;
+  --accent: #E65C00;
+  --accent2: #FF6B00;
+  --input-bg: #f8f8f8;
+  --input-border: rgba(0,0,0,0.15);
+  --shadow: 0 8px 32px rgba(0,0,0,0.1);
+  --glow: 0 0 15px rgba(230,92,0,0.2);
+  --header-bg: rgba(245,245,247,0.88);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+  position: relative;
+  overflow-x: hidden;
+}
+#synapseCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(8px);
+  opacity: 1;
+}
+/* HEADER */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--header-bg);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s, border-color 0.2s;
+}
+.header-brand { display: flex; align-items: center; gap: 0.75rem; }
+.brand-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: #fff;
+  box-shadow: 0 0 12px rgba(255,107,0,0.35);
+  flex-shrink: 0;
+}
+.brand-title {
+  font-size: 1.1rem; font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+.brand-sub {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.header-actions { display: flex; align-items: center; gap: 0.5rem; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 1rem; border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; border: none; outline: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(255,107,0,0.28);
+}
+.btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 20px rgba(255,107,0,0.45);
+  transform: translateY(-1px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--input-border);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 10px rgba(255,107,0,0.15);
+}
+.btn-danger {
+  background: rgba(220,38,38,0.85);
+  color: #fff;
+  border: 1px solid rgba(220,38,38,0.4);
+}
+.btn-danger:hover {
+  background: rgba(220,38,38,1);
+  box-shadow: 0 4px 16px rgba(220,38,38,0.35);
+  transform: translateY(-1px);
+}
+.btn-theme {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  padding: 0.45rem 0.6rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+  line-height: 1;
+}
+.btn-theme:hover { border-color: var(--accent); color: var(--accent); }
+:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(255,107,0,0.3); }
+
+/* MAIN CONTENT */
+.main-content { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* STATS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 640px) { .stats-grid { grid-template-columns: 1fr; } }
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px 12px 16px 12px;
+  padding: 1.4rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+  cursor: default;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow), var(--glow); }
+.stat-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, rgba(255,107,0,0.15), rgba(255,140,51,0.1));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.25rem; color: var(--accent);
+  flex-shrink: 0;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+@keyframes iconPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,107,0,0.2); }
+  50% { box-shadow: 0 0 0 6px rgba(255,107,0,0); }
+}
+.stat-info {}
+.stat-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-value { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; }
+[data-theme="dark"] .stat-value { text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+/* SECTION CARD */
+.section-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+.section-title-bar {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);
+}
+.accent-bar {
+  width: 4px; height: 24px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.section-heading {
+  font-size: 1.05rem; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--text);
+  flex: 1;
+}
+[data-theme="dark"] .section-heading { text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.section-body { padding: 1.5rem; }
+
+/* FORM */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+@media (max-width: 640px) { .form-grid-2 { grid-template-columns: 1fr; } }
+.form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+.form-label {
+  font-size: 0.82rem; font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.form-input, .form-select, .form-textarea {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 0.6rem 0.875rem;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  width: 100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.2);
+}
+.form-select option { background: var(--card); color: var(--text); }
+.form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.char-counter { font-size: 0.78rem; color: var(--text-muted); text-align: right; margin-top: 0.25rem; }
+
+/* UPLOAD ZONE */
+.upload-zone {
+  border: 2px dashed var(--input-border);
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  background: var(--input-bg);
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(255,107,0,0.04);
+}
+.upload-icon { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; opacity: 0.7; }
+.upload-text { font-size: 0.9rem; color: var(--text-muted); }
+.upload-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; opacity: 0.6; }
+.preview-wrap { position: relative; display: inline-block; }
+.preview-img { max-width: 100%; max-height: 220px; border-radius: 8px; object-fit: contain; }
+.remove-img-btn {
+  position: absolute; top: -8px; right: -8px;
+  background: rgba(220,38,38,0.9);
+  color: #fff; border: none; border-radius: 50%;
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; cursor: pointer;
+  transition: all 0.15s;
+}
+.remove-img-btn:hover { background: rgb(220,38,38); transform: scale(1.1); }
+
+/* FORM ACTIONS */
+.form-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
+
+/* RECORDS HEADER */
+.records-header {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);
+}
+.records-title-wrap { display: flex; align-items: center; gap: 0.75rem; flex: 1; }
+.records-controls { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.search-wrap { position: relative; }
+.search-wrap .fa-magnifying-glass {
+  position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 0.8rem; pointer-events: none;
+}
+.search-input {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem 0.45rem 2rem;
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  width: 200px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,107,0,0.2); }
+.search-input::placeholder { color: var(--text-muted); }
+.tab-btns { display: flex; gap: 0.25rem; }
+.tab-btn {
+  padding: 0.38rem 0.85rem;
+  border-radius: 7px; border: 1px solid var(--input-border);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all 0.18s;
+}
+.tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+.tab-btn.active {
+  background: var(--accent);
+  color: #fff; border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(255,107,0,0.25);
+}
+
+/* INCIDENTS GRID */
+.incidents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+.incident-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 16px 12px 16px 12px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.incident-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.incident-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow), var(--glow);
+  border-color: rgba(255,107,0,0.3);
+}
+.incident-card:hover::before { opacity: 1; }
+.inc-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; color: var(--accent);
+  font-weight: 600; letter-spacing: 0.02em;
+  margin-bottom: 0.35rem;
+}
+.inc-name {
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--text);
+  margin-bottom: 0.3rem;
+}
+[data-theme="dark"] .inc-name { text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+.inc-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.2rem 0.6rem; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.badge-active {
+  background: rgba(34,197,94,0.15);
+  color: #22c55e; border: 1px solid rgba(34,197,94,0.3);
+}
+.badge-active::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #22c55e;
+  animation: activePulse 2s ease-in-out infinite;
+}
+@keyframes activePulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+.badge-inactive {
+  background: rgba(239,68,68,0.12);
+  color: #ef4444; border: 1px solid rgba(239,68,68,0.25);
+}
+.inc-detail-row {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.8rem; color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+.inc-detail-row i { color: var(--accent); opacity: 0.7; width: 12px; flex-shrink: 0; }
+.inc-excerpt {
+  font-size: 0.82rem; color: var(--text-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0.6rem 0 0.5rem;
+}
+.inc-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 0.75rem; padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+.inc-has-img { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.3rem; }
+.inc-time { font-size: 0.72rem; color: var(--text-muted); }
+.empty-state {
+  text-align: center; padding: 3rem 1.5rem;
+  color: var(--text-muted);
+}
+.empty-state i { font-size: 2.5rem; color: var(--accent); opacity: 0.3; margin-bottom: 0.75rem; }
+.empty-state p { font-size: 0.9rem; }
+
+/* FOOTER */
+.site-footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+/* MODAL OVERLAY */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5), var(--glow);
+  width: 100%; max-width: 620px;
+  max-height: 90vh; overflow-y: auto;
+  transform: translateY(12px) scale(0.98);
+  transition: transform 0.22s ease, opacity 0.22s;
+}
+.modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+.modal-box::-webkit-scrollbar { width: 6px; }
+.modal-box::-webkit-scrollbar-track { background: transparent; }
+.modal-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);
+  position: sticky; top: 0; z-index: 1;
+}
+.modal-title { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+.modal-close {
+  background: transparent; border: none;
+  color: var(--text-muted); font-size: 1rem;
+  cursor: pointer; padding: 0.3rem 0.5rem; border-radius: 6px;
+  transition: all 0.15s;
+}
+.modal-close:hover { color: var(--accent); background: rgba(255,107,0,0.1); }
+.modal-body { padding: 1.5rem; }
+.detail-field { margin-bottom: 1.1rem; }
+.detail-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 0.3rem; }
+.detail-value { font-size: 0.92rem; color: var(--text); line-height: 1.6; }
+.detail-img {
+  max-width: 100%; border-radius: 8px; margin-top: 0.5rem;
+  cursor: pointer; transition: opacity 0.15s;
+  border: 1px solid var(--border);
+}
+.detail-img:hover { opacity: 0.88; }
+.modal-footer {
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--card2);
+}
+/* Delete Modal */
+.delete-modal-box { max-width: 420px; }
+.del-warning-icon { font-size: 2.5rem; color: #ef4444; text-align: center; margin-bottom: 1rem; }
+.del-title { font-size: 1.1rem; font-weight: 700; text-align: center; margin-bottom: 0.5rem; color: var(--text); }
+.del-text { font-size: 0.88rem; color: var(--text-muted); text-align: center; line-height: 1.6; }
+/* Lightbox */
+.lightbox-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  cursor: zoom-out;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.lightbox-overlay.open { opacity: 1; pointer-events: all; }
+.lightbox-img { max-width: 95vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,107,0,0.4); }
+
+/* INPUT DATE COLOR FIX */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) sepia(1) saturate(3) hue-rotate(10deg);
+  opacity: 0.6;
+}
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.5); }
+
+@media (max-width: 480px) {
+  .header-actions { gap: 0.3rem; }
+  .btn { padding: 0.4rem 0.65rem; font-size: 0.78rem; }
+  .records-controls { width: 100%; }
+  .search-input { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Synapse Canvas -->
+<canvas id="synapseCanvas"></canvas>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-brand">
+    <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+    <div>
+      <div class="brand-title">Incident Registry</div>
+      <div class="brand-sub">Exact Dispatcher LLC</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-theme" id="themeToggle" title="Toggle theme" onclick="toggleTheme()">🌙</button>
+    <button class="btn btn-ghost" onclick="exportCSV()">
+      <i class="fa-solid fa-download"></i> Export
+    </button>
+    <button class="btn btn-primary" onclick="scrollToForm()">
+      <i class="fa-solid fa-plus"></i> New Incident
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main-content">
+
+  <!-- STATS -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+      <div class="stat-info">
+        <div class="stat-label">Total Clients</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa-solid fa-check-circle"></i></div>
+      <div class="stat-info">
+        <div class="stat-label">Active</div>
+        <div class="stat-value" id="statActive">0</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fa-solid fa-times-circle"></i></div>
+      <div class="stat-info">
+        <div class="stat-label">Inactive</div>
+        <div class="stat-value" id="statInactive">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM SECTION -->
+  <div class="section-card" id="formSection">
+    <div class="section-title-bar">
+      <div class="accent-bar"></div>
+      <div class="section-heading">Register New Incident</div>
+    </div>
+    <div class="section-body">
+      <form id="incidentForm" onsubmit="handleSubmit(event)">
+        <div class="form-grid-2" style="margin-bottom:1rem;">
+          <div class="form-group">
+            <label class="form-label" for="dispatcherName">Dispatcher Name</label>
+            <input class="form-input" type="text" id="dispatcherName" name="dispatcherName" placeholder="Enter dispatcher name" autocomplete="off"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="organization">Organization</label>
+            <input class="form-input" type="text" id="organization" name="organization" placeholder="Enter organization" autocomplete="off"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="transferDate">Transfer Date</label>
+            <input class="form-input" type="date" id="transferDate" name="transferDate"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="status">Status</label>
+            <select class="form-select" id="status" name="status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Upload Zone -->
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="form-label">Screenshot</label>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFileChange(event)"/>
+            <div id="uploadPrompt">
+              <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+              <div class="upload-text">Drop image here or click to browse</div>
+              <div class="upload-hint">Max 5MB — PNG, JPG, GIF, WebP</div>
+            </div>
+            <div id="previewContainer" style="display:none;">
+              <div class="preview-wrap">
+                <img id="previewImg" class="preview-img" alt="Preview"/>
+                <button type="button" class="remove-img-btn" onclick="clearImage(event)"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explanation -->
+        <div class="form-group" style="margin-bottom:0.25rem;">
+          <label class="form-label" for="explanation">Explanation</label>
+          <textarea class="form-textarea" id="explanation" name="explanation" placeholder="Describe the incident in detail (minimum 20 characters)..." maxlength="2000" rows="5" oninput="updateCharCount()"></textarea>
+          <div class="char-counter"><span id="charCount">0</span> / 2000</div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="resetForm()">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Save Incident
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RECORDS SECTION -->
+  <div class="section-card" id="recordsSection">
+    <div class="records-header">
+      <div class="records-title-wrap">
+        <div class="accent-bar"></div>
+        <div class="section-heading">Incident Records</div>
+      </div>
+      <div class="records-controls">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input class="search-input" type="text" id="searchInput" placeholder="Search incidents..." oninput="handleSearch()"/>
+        </div>
+        <div class="tab-btns">
+          <button class="tab-btn active" onclick="setFilter('all')" data-filter="all">All</button>
+          <button class="tab-btn" onclick="setFilter('active')" data-filter="active">Active</button>
+          <button class="tab-btn" onclick="setFilter('inactive')" data-filter="inactive">Inactive</button>
+        </div>
+      </div>
+    </div>
+    <div id="incidentsList">
+      <div class="incidents-grid" id="incidentsGrid"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  Incident Registry &mdash; Exact Dispatcher LLC &mdash; powered by SILO locally
+</footer>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="detailModalTitle">Incident Detail</div>
+      <button class="modal-close" onclick="closeDetailModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="detailModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="editBtn" onclick="editIncident()"><i class="fa-solid fa-pen"></i> Edit</button>
+      <button class="btn btn-danger" id="deleteBtn" onclick="promptDelete()"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box delete-modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Confirm Delete</div>
+      <button class="modal-close" onclick="closeDeleteModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="text-align:center; padding: 2rem 1.5rem;">
+      <div class="del-warning-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="del-title">Delete Incident</div>
+      <div class="del-text">This action cannot be undone. The incident record and any associated screenshot will be permanently removed.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeDeleteModal()"><i class="fa-solid fa-xmark"></i> Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+  <img class="lightbox-img" id="lightboxImg" src="" alt="Full size"/>
+</div>
+
+<script>
+// ─── SYNAPSE CANVAS ───────────────────────────────────────────────────────────
+(function(){
+  const canvas = document.getElementById('synapseCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], animId;
+  const NODE_COUNT = 55, MAX_DIST = 180, SPEED = 0.35;
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initNodes(){
+    nodes = [];
+    for(let i = 0; i < NODE_COUNT; i++){
+      nodes.push({
+        x: Math.random()*W, y: Math.random()*H,
+        vx: (Math.random()-0.5)*SPEED, vy: (Math.random()-0.5)*SPEED,
+        r: 2 + Math.random()*2.5,
+        phase: Math.random()*Math.PI*2
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const t = Date.now()/1000;
+    // Lines
+    for(let i = 0; i < nodes.length; i++){
+      for(let j = i+1; j < nodes.length; j++){
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < MAX_DIST){
+          const alpha = (1 - dist/MAX_DIST) * 0.22;
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(255,107,0,${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    // Nodes
+    nodes.forEach((n,i) => {
+      const pulse = 0.5 + 0.5*Math.sin(t*1.2 + n.phase);
+      const alpha = 0.18 + pulse*0.22;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,130,0,${alpha})`;
+      ctx.fill();
+      // Move
+      n.x += n.vx; n.y += n.vy;
+      if(n.x < 0 || n.x > W) n.vx *= -1;
+      if(n.y < 0 || n.y > H) n.vy *= -1;
+    });
+    animId = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', ()=>{ resize(); });
+  resize(); initNodes(); draw();
+})();
+
+// ─── THEME TOGGLE ─────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('ir_theme', newTheme);
+}
+(function(){
+  const saved = localStorage.getItem('ir_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('themeToggle').textContent = saved === 'dark' ? '🌙' : '☀️';
+})();
+
+// ─── DATA LAYER ───────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'dispatch_incidents';
+
+function loadIncidents(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+
+function saveIncidents(arr){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+function generateId(){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let r = '';
+  for(let i=0;i<8;i++) r += chars.charAt(Math.floor(Math.random()*chars.length));
+  return 'INC-' + Date.now() + '-' + r;
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+let searchQuery = '';
+let currentDetailId = null;
+let pendingDeleteId = null;
+let currentImageB64 = null;
+let editingId = null;
+
+// ─── STATS ────────────────────────────────────────────────────────────────────
+function animateNumber(el, target){
+  let start = 0, dur = 600, startTime = null;
+  function step(ts){
+    if(!startTime) startTime = ts;
+    const p = Math.min((ts-startTime)/dur, 1);
+    el.textContent = Math.round(start + (target-start)*p);
+    if(p < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+
+function updateStats(){
+  const all = loadIncidents();
+  animateNumber(document.getElementById('statTotal'), all.length);
+  animateNumber(document.getElementById('statActive'), all.filter(i=>i.status==='active').length);
+  animateNumber(document.getElementById('statInactive'), all.filter(i=>i.status==='inactive').length);
+}
+
+// ─── FORMAT HELPERS ───────────────────────────────────────────────────────────
+function formatDate(str){
+  if(!str) return '—';
+  const d = new Date(str + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+}
+
+function formatRelativeTime(ts){
+  const diff = Date.now() - ts;
+  const m = Math.floor(diff/60000);
+  if(m < 1) return 'just now';
+  if(m < 60) return m + 'm ago';
+  const h = Math.floor(m/60);
+  if(h < 24) return h + 'h ago';
+  const d = Math.floor(h/24);
+  if(d < 30) return d + 'd ago';
+  return Math.floor(d/30) + 'mo ago';
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── RENDER LIST ──────────────────────────────────────────────────────────────
+function renderList(){
+  const all = loadIncidents();
+  const grid = document.getElementById('incidentsGrid');
+
+  let filtered = all;
+  if(currentFilter !== 'all') filtered = filtered.filter(i => i.status === currentFilter);
+  if(searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(i =>
+      (i.dispatcherName||'').toLowerCase().includes(q) ||
+      (i.organization||'').toLowerCase().includes(q) ||
+      (i.explanation||'').toLowerCase().includes(q) ||
+      (i.id||'').toLowerCase().includes(q)
+    );
+  }
+
+  if(filtered.length === 0){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+      <div><i class="fa-solid fa-folder-open"></i></div>
+      <p>No incidents found.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(inc => {
+    const badgeClass = inc.status === 'active' ? 'badge-active' : 'badge-inactive';
+    const badgeLabel = inc.status === 'active' ? 'Active' : 'Inactive';
+    const excerpt = escapeHtml((inc.explanation||'').substring(0,200));
+    const hasImg = !!inc.screenshot;
+    const ts = inc.createdAt || 0;
+    return `<div class="incident-card" onclick="openDetail('${escapeHtml(inc.id)}')">
+      <div class="inc-id">${escapeHtml(inc.id)}</div>
+      <div class="inc-name">${escapeHtml(inc.dispatcherName||'Unnamed')}</div>
+      <div class="inc-meta">
+        <span class="status-badge ${badgeClass}">${badgeLabel}</span>
+      </div>
+      <div class="inc-detail-row"><i class="fa-solid fa-building"></i> ${escapeHtml(inc.organization||'—')}</div>
+      <div class="inc-detail-row"><i class="fa-solid fa-calendar-days"></i> ${formatDate(inc.transferDate)}</div>
+      <div class="inc-excerpt">${excerpt}</div>
+      <div class="inc-footer">
+        <span class="inc-has-img">${hasImg ? '<i class="fa-solid fa-image"></i> Screenshot' : ''}</span>
+        <span class="inc-time">${formatRelativeTime(ts)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── FILTER / SEARCH ──────────────────────────────────────────────────────────
+function setFilter(f){
+  currentFilter = f;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === f);
+  });
+  renderList();
+}
+
+function handleSearch(){
+  searchQuery = document.getElementById('searchInput').value;
+  renderList();
+}
+
+function setupSearch(){ /* handled by inline oninput */ }
+
+// ─── UPLOAD ───────────────────────────────────────────────────────────────────
+function setupUpload(){
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('click', function(e){
+    if(!e.target.closest('.remove-img-btn')) document.getElementById('fileInput').click();
+  });
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if(file) processImageFile(file);
+  });
+}
+
+function handleFileChange(e){
+  const file = e.target.files[0];
+  if(file) processImageFile(file);
+}
+
+function processImageFile(file){
+  if(!file.type.startsWith('image/')) { alert('Please upload an image file.'); return; }
+  if(file.size > 5*1024*1024) { alert('Image must be under 5MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e2){
+    resizeImage(e2.target.result, 1200, function(b64){
+      currentImageB64 = b64;
+      showPreview(b64);
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function resizeImage(dataUrl, maxW, cb){
+  const img = new Image();
+  img.onload = function(){
+    let w = img.width, h = img.height;
+    if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    cb(canvas.toDataURL('image/jpeg', 0.82));
+  };
+  img.src = dataUrl;
+}
+
+function showPreview(src){
+  document.getElementById('uploadPrompt').style.display = 'none';
+  document.getElementById('previewContainer').style.display = 'block';
+  document.getElementById('previewImg').src = src;
+}
+
+function clearImage(e){
+  if(e) e.stopPropagation();
+  currentImageB64 = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('previewContainer').style.display = 'none';
+  document.getElementById('uploadPrompt').style.display = 'block';
+}
+
+// ─── CHAR COUNT ───────────────────────────────────────────────────────────────
+function updateCharCount(){
+  const v = document.getElementById('explanation').value;
+  document.getElementById('charCount').textContent = v.length;
+}
+
+// ─── FORM ─────────────────────────────────────────────────────────────────────
+function handleSubmit(e){
+  if(e) e.preventDefault();
+  const name = document.getElementById('dispatcherName').value.trim();
+  const org = document.getElementById('organization').value.trim();
+  const date = document.getElementById('transferDate').value;
+  const status = document.getElementById('status').value;
+  const expl = document.getElementById('explanation').value.trim();
+
+  if(!name){ alert('Dispatcher Name is required.'); return; }
+  if(!org){ alert('Organization is required.'); return; }
+  if(!date){ alert('Transfer Date is required.'); return; }
+  if(expl.length < 20){ alert('Explanation must be at least 20 characters.'); return; }
+  if(expl.length > 2000){ alert('Explanation must not exceed 2000 characters.'); return; }
+
+  const all = loadIncidents();
+
+  if(editingId){
+    const idx = all.findIndex(i => i.id === editingId);
+    if(idx !== -1){
+      all[idx].dispatcherName = name;
+      all[idx].organization = org;
+      all[idx].transferDate = date;
+      all[idx].status = status;
+      all[idx].explanation = expl;
+      if(currentImageB64 !== null) all[idx].screenshot = currentImageB64;
+      else if(currentImageB64 === null && !document.getElementById('previewContainer').style.display.includes('none') === false){
+        all[idx].screenshot = null;
+      }
+      all[idx].updatedAt = Date.now();
+    }
+    editingId = null;
+  } else {
+    const incident = {
+      id: generateId(),
+      dispatcherName: name,
+      organization: org,
+      transferDate: date,
+      status: status,
+      explanation: expl,
+      screenshot: currentImageB64 || null,
+      createdAt: Date.now()
+    };
+    all.unshift(incident);
+  }
+
+  saveIncidents(all);
+  updateStats();
+  renderList();
+  resetForm();
+}
+
+function resetForm(){
+  document.getElementById('incidentForm').reset();
+  document.getElementById('charCount').textContent = '0';
+  clearImage();
+  editingId = null;
+  document.querySelector('#formSection .section-heading').textContent = 'Register New Incident';
+}
+
+// ─── DETAIL MODAL ─────────────────────────────────────────────────────────────
+function openDetail(id){
+  const all = loadIncidents();
+  const inc = all.find(i => i.id === id);
+  if(!inc) return;
+  currentDetailId = id;
+
+  document.getElementById('detailModalTitle').textContent = escapeHtml(inc.id);
+
+  let imgHtml = '';
+  if(inc.screenshot){
+    imgHtml = `<div class="detail-field">
+      <div class="detail-label">Screenshot</div>
+      <img class="detail-img" src="${inc.screenshot}" alt="Screenshot" onclick="openLightbox('${inc.id}')"/>
+    </div>`;
+  }
+
+  document.getElementById('detailModalBody').innerHTML = `
+    <div class="detail-field">
+      <div class="detail-label">Dispatcher Name</div>
+      <div class="detail-value">${escapeHtml(inc.dispatcherName||'—')}</div>
+    </div>
+    <div class="detail-field">
+      <div class="detail-label">Organization</div>
+      <div class="detail-value">${escapeHtml(inc.organization||'—')}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div class="detail-field">
+        <div class="detail-label">Transfer Date</div>
+        <div class="detail-value">${formatDate(inc.transferDate)}</div>
+      </div>
+      <div class="detail-field">
+        <div class="detail-label">Status</div>
+        <div class="detail-value">
+          <span class="status-badge ${inc.status==='active'?'badge-active':'badge-inactive'}">${inc.status}</span>
+        </div>
+      </div>
+    </div>
+    <div class="detail-field">
+      <div class="detail-label">Explanation</div>
+      <div class="detail-value" style="white-space:pre-wrap;">${escapeHtml(inc.explanation||'—')}</div>
+    </div>
+    ${imgHtml}
+    <div class="detail-field">
+      <div class="detail-label">Created</div>
+      <div class="detail-value">${inc.createdAt ? new Date(inc.createdAt).toLocaleString() : '—'}</div>
+    </div>
+  `;
+
+  document.getElementById('detailModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetailModal(){
+  document.getElementById('detailModal').classList.remove('open');
+  document.body.style.overflow = '';
+  currentDetailId = null;
+}
+
+// ─── EDIT ─────────────────────────────────────────────────────────────────────
+function editIncident(){
+  if(!currentDetailId) return;
+  const all = loadIncidents();
+  const inc = all.find(i => i.id === currentDetailId);
+  if(!inc) return;
+
+  document.getElementById('dispatcherName').value = inc.dispatcherName || '';
+  document.getElementById('organization').value = inc.organization || '';
+  document.getElementById('transferDate').value = inc.transferDate || '';
+  document.getElementById('status').value = inc.status || 'active';
+  document.getElementById('explanation').value = inc.explanation || '';
+  updateCharCount();
+
+  if(inc.screenshot){
+    currentImageB64 = inc.screenshot;
+    showPreview(inc.screenshot);
+  } else {
+    clearImage();
+  }
+
+  editingId = currentDetailId;
+  document.querySelector('#formSection .section-heading').textContent = 'Edit Incident';
+
+  closeDetailModal();
+  scrollToForm();
+}
+
+// ─── DELETE ───────────────────────────────────────────────────────────────────
+function promptDelete(){
+  if(!currentDetailId) return;
+  pendingDeleteId = currentDetailId;
+  closeDetailModal();
+  document.getElementById('deleteModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteModal(){
+  document.getElementById('deleteModal').classList.remove('open');
+  document.body.style.overflow = '';
+  pendingDeleteId = null;
+}
+
+function confirmDelete(){
+  if(!pendingDeleteId) return;
+  let all = loadIncidents();
+  all = all.filter(i => i.id !== pendingDeleteId);
+  saveIncidents(all);
+  updateStats();
+  renderList();
+  closeDeleteModal();
+}
+
+// ─── LIGHTBOX ─────────────────────────────────────────────────────────────────
+function openLightbox(id){
+  const all = loadIncidents();
+  const inc = all.find(i => i.id === id);
+  if(!inc || !inc.screenshot) return;
+  document.getElementById('lightboxImg').src = inc.screenshot;
+  document.getElementById('lightboxOverlay').classList.add('open');
+}
+
+function closeLightbox(){
+  document.getElementById('lightboxOverlay').classList.remove('open');
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────────────────────────
+function exportCSV(){
+  const all = loadIncidents();
+  if(!all.length){ alert('No incidents to export.'); return; }
+  const headers = ['ID','Dispatcher Name','Organization','Transfer Date','Status','Explanation','Created At'];
+  const rows = all.map(i => [
+    i.id, i.dispatcherName, i.organization, i.transferDate, i.status,
+    (i.explanation||'').replace(/"/g,'""'),
+    i.createdAt ? new Date(i.createdAt).toISOString() : ''
+  ].map(v => `"${v||''}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = 'incidents_' + Date.now() + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function exportAllToPDF(){
+  window.print();
+}
+
+// ─── SCROLL TO FORM ───────────────────────────────────────────────────────────
+function scrollToForm(){
+  document.getElementById('formSection').scrollIntoView({ behavior:'smooth', block:'start' });
+  setTimeout(() => document.getElementById('dispatcherName').focus(), 400);
+}
+
+// ─── KEYBOARD ESC ─────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    if(document.getElementById('lightboxOverlay').classList.contains('open')) { closeLightbox(); return; }
+    if(document.getElementById('deleteModal').classList.contains('open')) { closeDeleteModal(); return; }
+    if(document.getElementById('detailModal').classList.contains('open')) { closeDetailModal(); return; }
+  }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+setupUpload();
+updateStats();
+renderList();
+</script>
+</body>
+</html>
+```
